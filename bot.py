@@ -25,7 +25,7 @@ ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 ## CONSTANTS ##
 DEBUG = True
 # Verifies if the user wants to continue, this is for development
-VERIFY_INPUT = True
+VERIFY_INPUT = False
 TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update tweet list
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour

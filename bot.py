@@ -1,11 +1,14 @@
+# System imports
 import os
 import time
 import random
-import logging
-from pprint import pprint
 
+# Third part imports
 import tweepy
 from dotenv import load_dotenv
+
+# Local modules
+import keep_alive
 
 # Load values from the .env file
 load_dotenv()
@@ -30,10 +33,11 @@ TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update 
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour
 INTERVAL = 10
-RELOAD_MESSAGE = "oi dipshit @xkaubu @nannowasright, reload the bot"
+RELOAD_MESSAGE = "oi mate @xkaubu @nannowasright, reload the bot"
 # Whether the bot will really send messages
 # This is good if you just want to test generation
 SEND_MESSAGES = True
+REPLIT_KEEP_ALIVE = False
 
 ## BE CAREFUL WHEN CHANGING ME ##
 # interval_secs = 2 # When you want to manually set seconds for debug purposes
@@ -82,6 +86,10 @@ with open(TWEET_FILE, "r") as f:
 if VERIFY_INPUT: input("Press [ENTER] to start main loop:")
 
 random.shuffle(tweets)
+
+# Turn on web server to keep it hosted
+if REPLIT_KEEP_ALIVE:
+    keep_alive.keep_alive()
 
 for tweet in tweets:
     if DEBUG: print("Selecting new tweet...")

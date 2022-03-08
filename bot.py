@@ -1,20 +1,16 @@
 import os
+import time
+import secrets
 import logging
 from pprint import pprint
 
 import tweepy
 from dotenv import load_dotenv
 
-# Start logging
-logger = logging.getLogger("Tweepy")
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename="tweepy.log")
-logger.addHandler(handler)
-
 # Load values from the .env file
 load_dotenv()
 
-print(os.getenv("ENV_TEST")) # Check if the .env file is loaded
+print(os.getenv("ENV_TEST")) # Check if the .env file is loaded, comment this out if you don't have this
 
 # Load all the environmental variables into constants
 # CONSUMER KEY is the API key
@@ -26,8 +22,18 @@ CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 
+## CONSTANTS ##
 DEBUG = True
+# Verifies if the user wants to continue, this is for development
+VERIFY_INPUT = True
 TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update tweet list
+# Message interval in minutes
+# Default = 60: every 60 minutes/1 hour
+INTERVAL = 1
+
+## BE CAREFUL WHEN CHANGING ME ##
+# interval_secs = 2 # When you want to manually set seconds for debug purposes
+interval_secs = INTERVAL * 60
 
 # Analyze how many characters it is, counting emojis as two characters, then returning only 280 (278) characters
 def return_200_chars(tweet):
@@ -47,7 +53,7 @@ def return_200_chars(tweet):
     return tweet[:to_cut]
 
 # To make sure I don't start the program erroneously
-input("Press ENTER to start the server...") # Remove this in prod
+if VERIFY_INPUT: input("Press [ENTER] to start authentication:")
 
 client = tweepy.Client(
     bearer_token = BEARER_TOKEN,
@@ -57,7 +63,30 @@ client = tweepy.Client(
     access_token_secret = ACCESS_TOKEN_SECRET,
 )
 
-xkaubu = client.get_user(username="xkaubu")
-print(f"xkaubu obj: {xkaubu}\n")
-xkaubu_id = xkaubu.data.id
-print(f"xkaubu's Twitter ID is {xkaubu_id}")
+# Sets the user agent
+client.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36"
+
+tweets = []
+
+print(f"Opening {TWEET_FILE}...")
+with open(TWEET_FILE, "r") as f:
+    print("Reading lines...")
+    lines = f.read()
+    print("Splitting lines...")
+    tweets = lines.splitlines()
+
+if VERIFY_INPUT: input("Press [ENTER] to start main loop:")
+
+while True:
+    if DEBUG: print("Selecting new tweet...")
+    tweet = secrets.choice(tweets) # Select a random tweet from the list
+
+    if DEBUG: print(f"Tweet:\t\t{tweet}")
+    print("Sending tweet...")
+    client.create_tweet(
+        text=tweet
+        # user_auth is True by default
+    )
+    
+    if DEBUG: print(f"Sleeping for {interval_secs} seconds...")
+    time.sleep(interval_secs) # Minutes x 60 to get seconds

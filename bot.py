@@ -29,7 +29,7 @@ VERIFY_INPUT = False
 TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update tweet list
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour
-INTERVAL = 1
+INTERVAL = 10
 RELOAD_MESSAGE = "oi dipshit @xkaubu @nannowasright, reload the bot"
 
 ## BE CAREFUL WHEN CHANGING ME ##

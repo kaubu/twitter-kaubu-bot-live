@@ -94,6 +94,7 @@ if REPLIT_KEEP_ALIVE:
 for tweet in tweets:
     if DEBUG: print("Selecting new tweet...")
 
+    if tweet == "": tweet = "<tweet was empty>" # An empty tweet can crash the whole program
     if DEBUG: print(f"Tweet:\t\t\t{tweet}")
     tweet = return_200_chars(tweet)
     if DEBUG: print(f"Cut tweet:\t\t{tweet}")

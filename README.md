@@ -6,7 +6,7 @@ The bot is available at [@kaubuBOT](https://twitter.com/xkaubuBOT)
 ## Setup
 Install these dependencies:
 
-`pip install tweepy python-dotenv`
+`pip install tweepy python-dotenv emoji`
 
 There already exists an example `.env.example` file.
 

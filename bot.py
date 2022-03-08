@@ -31,6 +31,9 @@ TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update 
 # Default = 60: every 60 minutes/1 hour
 INTERVAL = 10
 RELOAD_MESSAGE = "oi dipshit @xkaubu @nannowasright, reload the bot"
+# Whether the bot will really send messages
+# This is good if you just want to test generation
+SEND_MESSAGES = True
 
 ## BE CAREFUL WHEN CHANGING ME ##
 # interval_secs = 2 # When you want to manually set seconds for debug purposes
@@ -83,18 +86,20 @@ random.shuffle(tweets)
 for tweet in tweets:
     if DEBUG: print("Selecting new tweet...")
 
-    if DEBUG: print(f"Tweet:\t\t{tweet}")
+    if DEBUG: print(f"Tweet:\t\t\t{tweet}")
+    tweet = return_200_chars(tweet)
+    if DEBUG: print(f"Cut tweet:\t\t{tweet}")
     print("Sending tweet...")
-    client.create_tweet(
+    if SEND_MESSAGES: client.create_tweet(
         text=tweet
         # user_auth is True by default
     )
     
-    if DEBUG: print(f"Sleeping for {interval_secs} seconds...")
+    if DEBUG: print(f"Sleeping for {interval_secs} seconds/{INTERVAL} minutes...")
     time.sleep(interval_secs) # Minutes x 60 to get seconds
 
 print("Sending shutdown...")
-client.create_tweet(
+if SEND_MESSAGES: client.create_tweet(
     text=RELOAD_MESSAGE
     # user_auth is True by default
 )

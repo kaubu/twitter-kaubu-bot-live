@@ -1,6 +1,6 @@
 import os
 import time
-import secrets
+import random
 import logging
 from pprint import pprint
 
@@ -30,6 +30,7 @@ TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update 
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour
 INTERVAL = 1
+RELOAD_MESSAGE = "oi dipshit @xkaubu @nannowasright, reload the bot"
 
 ## BE CAREFUL WHEN CHANGING ME ##
 # interval_secs = 2 # When you want to manually set seconds for debug purposes
@@ -77,9 +78,10 @@ with open(TWEET_FILE, "r") as f:
 
 if VERIFY_INPUT: input("Press [ENTER] to start main loop:")
 
-while True:
+random.shuffle(tweets)
+
+for tweet in tweets:
     if DEBUG: print("Selecting new tweet...")
-    tweet = secrets.choice(tweets) # Select a random tweet from the list
 
     if DEBUG: print(f"Tweet:\t\t{tweet}")
     print("Sending tweet...")
@@ -90,3 +92,9 @@ while True:
     
     if DEBUG: print(f"Sleeping for {interval_secs} seconds...")
     time.sleep(interval_secs) # Minutes x 60 to get seconds
+
+print("Sending shutdown...")
+client.create_tweet(
+    text=RELOAD_MESSAGE
+    # user_auth is True by default
+)

@@ -29,7 +29,12 @@ ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 DEBUG = True
 # Verifies if the user wants to continue, this is for development
 VERIFY_INPUT = False
-TWEET_FILE = "tweets/current.txt" # Rename current.txt and replace it to update tweet list
+# The current directory where it selects current at
+# This is used to sort different bots using the same source code
+# You can change this to an environmental variable to host the same project with different outputs
+BOT_DIR = "kaubu"
+# BOT_DIR = os.getenv("BOT_DIR")
+TWEET_FILE = f"tweets/{BOT_DIR}/current.txt" # Rename current.txt and replace it to update tweet list
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour
 INTERVAL = 10
@@ -38,6 +43,7 @@ RELOAD_MESSAGE = "oi mate @xkaubu @nannowasright, reload the bot"
 # This is good if you just want to test generation
 SEND_MESSAGES = True
 REPLIT_KEEP_ALIVE = False
+FAIL_ON_ERROR = False # Should the bot shutdown whenever it occurs an error?
 
 ## BE CAREFUL WHEN CHANGING ME ##
 # interval_secs = 2 # When you want to manually set seconds for debug purposes
@@ -99,10 +105,14 @@ for tweet in tweets:
     tweet = return_200_chars(tweet)
     if DEBUG: print(f"Cut tweet:\t\t{tweet}")
     print("Sending tweet...")
-    if SEND_MESSAGES: client.create_tweet(
-        text=tweet
-        # user_auth is True by default
-    )
+    try:
+        if SEND_MESSAGES: client.create_tweet(
+            text=tweet
+            # user_auth is True by default
+        )
+    except Exception as e:
+        print(f"[ERROR] {e}")
+        if FAIL_ON_ERROR: break
     
     if DEBUG: print(f"Sleeping for {interval_secs} seconds/{INTERVAL} minutes...")
     time.sleep(interval_secs) # Minutes x 60 to get seconds

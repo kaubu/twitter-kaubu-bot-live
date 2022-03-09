@@ -34,7 +34,7 @@ ENV_TEST=.env has been loaded
 Then, enter in your secrets there, or enter it in your environment.
 
 ### Custom tweets
-Put all tweets you want to routinely tweet out in `tweets/current.txt`
+Put all tweets you want to routinely tweet out in `tweets/{BOT_DIR}/current.txt`
 
 ### Customization
 Look through the program and you can customize stuff like the interval between messages.

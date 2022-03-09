@@ -6,6 +6,7 @@ import random
 # Third part imports
 import tweepy
 from dotenv import load_dotenv
+from emoji import UNICODE_EMOJI
 
 # Local modules
 import keep_alive
@@ -29,7 +30,7 @@ ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 DEBUG = True
 # Verifies if the user wants to continue, this is for development
 VERIFY_INPUT = False
-# The current directory where it selects current at
+# The current directory where it selects current.txt at
 # This is used to sort different bots using the same source code
 # You can change this to an environmental variable to host the same project with different outputs
 BOT_DIR = "kaubu"
@@ -38,6 +39,7 @@ TWEET_FILE = f"tweets/{BOT_DIR}/current.txt" # Rename current.txt and replace it
 # Message interval in minutes
 # Default = 60: every 60 minutes/1 hour
 INTERVAL = 10
+# Tweet sent out when the bot runs out of messages
 RELOAD_MESSAGE = "oi mate @xkaubu @nannowasright, reload the bot"
 # Whether the bot will really send messages
 # This is good if you just want to test generation
@@ -46,15 +48,21 @@ REPLIT_KEEP_ALIVE = False
 FAIL_ON_ERROR = False # Should the bot shutdown whenever it occurs an error?
 
 ## BE CAREFUL WHEN CHANGING ME ##
-# interval_secs = 2 # When you want to manually set seconds for debug purposes
-interval_secs = INTERVAL * 60
+# When you want to manually set seconds for debug purposes
+# Be careful doing this without setting SEND_MESSAGES to False
+# otherwise it could spam more than the API rate limits allow.
+# 
+# interval_secs = 2
+interval_secs = INTERVAL * 60 # seconds = minutes * 60
+## BE CAREFUL WHEN CHANGING ME END ##
+
+# Precalculating the sleep message so it doesn't format every time
+SLEEP_MESSAGE = f"Sleeping for {interval_secs} seconds/{INTERVAL} minutes..."
 
 # Analyze how many characters it is, counting emojis as two characters, then returning only 280 (278) characters
 def return_200_chars(tweet):
     if len(tweet) <= 280: return tweet
     
-    from emoji import UNICODE_EMOJI
-
     num_emoji = sum(tweet.count(emoji) for emoji in UNICODE_EMOJI)
     ignored_chars = UNICODE_EMOJI.copy()
     ignored_chars['\n'] = 0
@@ -69,6 +77,7 @@ def return_200_chars(tweet):
 # To make sure I don't start the program erroneously
 if VERIFY_INPUT: input("Press [ENTER] to start authentication:")
 
+# Sign in with API V2 credentials
 client = tweepy.Client(
     bearer_token = BEARER_TOKEN,
     consumer_key = CONSUMER_KEY, # API key
@@ -114,11 +123,10 @@ for tweet in tweets:
         print(f"[ERROR] {e}")
         if FAIL_ON_ERROR: break
     
-    if DEBUG: print(f"Sleeping for {interval_secs} seconds/{INTERVAL} minutes...")
+    if DEBUG: print(SLEEP_MESSAGE)
     time.sleep(interval_secs) # Minutes x 60 to get seconds
 
 print("Sending shutdown...")
 if SEND_MESSAGES: client.create_tweet(
     text=RELOAD_MESSAGE
-    # user_auth is True by default
 )
